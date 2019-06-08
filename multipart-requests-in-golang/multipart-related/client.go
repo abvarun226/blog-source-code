@@ -17,7 +17,7 @@ func main() {
 	flag.Parse()
 
 	positionalArgs := flag.Args()
-	if len(positionalArgs) < 1 {
+	if len(positionalArgs) == 1 {
 		log.Fatalf("This program requires at least 1 positional argument.")
 	}
 	

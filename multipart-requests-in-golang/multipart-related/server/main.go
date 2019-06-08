@@ -17,8 +17,7 @@ func main() {
 	mux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 		contentType, params, parseErr := mime.ParseMediaType(r.Header.Get("Content-Type"))
 		if parseErr != nil || !strings.HasPrefix(contentType, "multipart/") {
-			log.Printf("invalid parameters: %v", parseErr)
-			w.WriteHeader(http.StatusBadRequest)
+			http.Error(w, "expecting a multipart message", http.StatusBadRequest)
 			return
 		}
 
