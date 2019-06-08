@@ -1,0 +1,35 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <div>
+            <input type="file" id="file-select" name="media" multiple/>
+            <button type="submit" onclick="send()">Upload</button>
+            </div>
+        <script>
+        function send() {
+            var metadata = {
+                'title': 'hello world',
+                'description': "Multipart form-data upload test"
+            };
+
+            var form = new FormData();
+            form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
+
+            var files = document.getElementById('file-select');
+            var numFiles = files.files.length;
+            for (var i = 0; i < numFiles; i++) {
+                form.append('media', files.files[i]);
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', 'http://localhost:8080/upload');
+            xhr.responseType = 'json';
+            xhr.onload = () => {
+                console.log(xhr.response.id);
+            };
+            xhr.send(form);
+        }
+        </script>
+    </body>
+</html>
