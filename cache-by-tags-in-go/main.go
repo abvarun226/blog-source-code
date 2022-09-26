@@ -17,7 +17,7 @@ func main() {
 		},
 	)
 
-	app := cache{Client: client}
+	app := cache{client: client}
 
 	k := "data:key1"
 	v := "randomstringdata"
@@ -50,14 +50,14 @@ func main() {
 }
 
 type cache struct {
-	client redis.Client
+	client *redis.Client
 }
 
 // SetByTags will set cache by given tags.
 func (c *cache) SetByTags(key, value string, expiry time.Duration, tags []string) {
 	t := time.Now()
 
-	pipe := c.Client.TxPipeline()
+	pipe := c.client.TxPipeline()
 	for _, tag := range tags {
 		pipe.SAdd("comment_by_tags:"+tag, key)
 	}
@@ -76,10 +76,10 @@ func (c *cache) Invalidate(tags []string) {
 	keys := make([]string, 0)
 	for _, tag := range tags {
 		tagKey := "comment_by_tags:" + tag
-		k, _ := c.Client.SMembers(tagKey).Result()
+		k, _ := c.client.SMembers(tagKey).Result()
 		keys = append(keys, tagKey)
 		keys = append(keys, k...)
 	}
-	c.Client.Del(keys...)
+	c.client.Del(keys...)
 	log.Printf("Invalidate: time take = %dms", time.Since(t).Milliseconds())
 }
